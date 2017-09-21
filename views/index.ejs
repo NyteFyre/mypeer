@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>WebRTC P2P Learning</title>
+	
+	
+
+    <!-- Bootstrap -->
+    <link href='http://fonts.googleapis.com/css?family=Raleway:700,400,300' rel='stylesheet' type='text/css'>
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+	
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/getscreenmedia.bundle.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+	<!-- This is the top level navigation, it stays visible throughout the app -->
+    <nav class="navbar navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          
+        </div>
+        <ul class="nav navbar-nav menu-right">
+          <li><a href="https://webrtc.com"></a></li>
+        </ul>
+      </div>
+    </nav>
+    
+	<!-- This is the initial landing page where you choose to enter as a student or as a expert -->
+    <div id="landingPage" class="mastHead landing-page">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-8 col-xs-offset-2 ">
+            <div class="starter-text">
+              <h1 style="color:#000000;"><strong>WebRTC</strong></h1>
+              <p class="lead" style="color:#000000;">Peer to Peer Learning</p>
+            </div>
+            <div class="starter-call-to-action">
+              <a href="" id="enterAsStudent" class="call-group">Student</a>
+              <a href="" id="enterAsExpert" class="call-group">Expert</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+	
+    <div id="studentEntry" class="mastHead" style="display: none;">
+      <div class="signin-to-app">
+        <h2>Welcome to WebRTC</h2>
+        
+        <div id="requestExpertForm">
+		  <p>We will connect you with an expert after you<br>tell us some basic information…</p>
+		  
+		  <form class="form-inline">
+            <div class="form-group">
+              <input id="studentName" class="input-styled" type="text" class="form-control" id="" value="Your Name">
+              <button id="requestExpert" class="input-styled" type="button">Request an Expert</button>
+            </div>
+          </form>
+		</div>
+		
+        <div id="waitingForExpert" class="loading-wrap" style="display: none;">
+          <span>Waiting for the expert to arrive...</span>
+          <div class="progress">
+            <div id="waitingForExpertProgress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+              <span class="sr-only"></span>
+            </div>
+          </div>
+        </div>
+		
+        <div id="expertListing" class="expert-info" style="display: none;">
+          <div class="doc-img">
+            <img src="images/expert.jpg">
+          </div>
+          <div class="doc-text">
+            <span class="name">The Expert will see you now</span>
+            <span class="specialty"></span>
+            <button id="callExpert" class="input-styled" type="button">Call the Expert</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+	
+    <div id="expertSignup" class="mastHead" style="display: none;">
+      <div class="signin-to-app signin-expert">
+        <h2>Welcome to WebRTC</h2>
+        <p>There are students waiting to talk with you.<br><small>Just enter your name and press the button to wait for a call.</small></p>
+        
+		<div id="expertSignupForm">
+          <form class="form-inline">
+            <div class="form-group">
+              <input class="input-styled" type="text" class="form-control" id="expertName" value="Your Name">
+              <input class="input-styled" type="text" class="form-control" id="expertSpecialty" value="Your Specialty">
+              <button id="expertSignupButton" class="input-styled" type="button">Wait for Student</button>
+            </div>
+          </form>
+		</div>
+		
+        <div id="waitingForStudent" class="loading-wrap" style="display: none;">
+          <span>Waiting for students to contact you...</span>
+          <div class="progress">
+            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+              <span class="sr-only"></span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <div id="videoPage" class="mastHead" style="display: none;">
+      <div class="video-page-holder video-page-holder-horizontal">
+        <div class="left">
+          <div class="video-wrap">
+            <div class="main-video">
+              <video id="mainVideoTag" class="" autoplay></video>
+            </div>
+            <div class="small-video">
+              <video id="smallVideoTag" autoplay muted="muted"></video>
+            </div>
+          </div>
+          
+          <div class="actions-holder">
+			<a id="muteMyself" class="input-styled" href="javascript:void(0)">Mute</a>
+			<a id="pauseMyVideo" class="input-styled" href="javascript:void(0)">Pause Video</a>
+            <a id="shareMyScreen" class="input-styled" href="javascript:void(0)">Share Screen</a>
+          </div>
+
+          <form class="send-file form-inline">
+			<div class="form-group" style="margin: 0 auto;">
+				<input type="file" id="sendFile" style="margin: 0 auto;" /><br/>
+				<progress id="fileProgress" value=“1” max="100"></progress><br/>
+				<a id="receivedFileLink"></a><br/>
+			</div>
+          </form>
+  
+          <form class="send-message form-inline">
+            <div class="form-group">
+			  <input id="myMessage" class="input-styled" type="text" class="form-control" id="" value="">
+			  <button id="sendMessage" class="input-styled" type="button">Send Message</button>
+            </div>
+          </form>
+
+        </div>
+        
+        <div class="right">
+  
+          <div id="messageHolder" class="message-holder">
+			<div id="messageInName" class="message-in"></div>
+			<div id="messageOutName" class="message-out"></div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+	
+	<!-- Our project javascript files -->
+	<script src="js/blob.js"></script>
+	<script src="js/webrtc.js"></script>
+	<script src="js/app.js"></script>
+  </body>
+</html>

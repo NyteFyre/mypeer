@@ -1,0 +1,21 @@
+{
+	"name": "rtcpeer",
+	"version": "0.0.1",
+	"private": true,
+	"dependencies": {
+		"coffee-script": "^1.12.7",
+		"coffeescript": "^1.12.7",
+		"connect": "^3.6.3",
+		"ejs": "2.x",
+		"engine.io": "^3.1.1",
+		"express": "4.x",
+		"express.io": "1.x",
+		"forever": "^0.15.3",
+		"getscreenmedia": "^4.0.1",
+		"nodemon": "^1.12.0",
+		"socket.io": "^2.0.3"
+	},
+	"engines": {
+    "node": "8.4.0"
+  }
+}
